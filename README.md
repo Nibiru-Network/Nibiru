@@ -9,12 +9,8 @@ https://camo.githubusercontent.com/915b7be44ada53c290eb157634330494ebe3e30a/6874
 [![Travis](https://travis-ci.com/token/nibiru.svg?branch=master)](https://travis-ci.com/token/nibiru)
 [![Discord](https://img.shields.io/badge/discord-join%20chat-blue.svg)](https://discord.gg/nthXNEv)
 
-Automated builds are available for stable releases and the unstable master branch. Binary
-archives are published at https://nibiru.org/downloads/.
 
 ## Building the source
-
-For prerequisites and detailed build instructions please read the [Installation Instructions](https://nibiru.org/docs/install-and-build/installing-nibiru).
 
 Building `nbn` requires both a Go (version 1.13 or later) and a C compiler. You can install
 them using your favourite package manager. Once the dependencies are installed, run
@@ -91,26 +87,6 @@ $ nibiru --your-favourite-flags dumpconfig
 ```
 
 *Note: This works only with `nbn` v1.6.0 and above.*
-
-#### Docker quick start
-
-One of the quickest ways to get nibiru up and running on your machine is by using
-Docker:
-
-```shell
-docker run -d --name nibiru-node -v /Users/alice/nibiru:/root \
-           -p 8545:8545 -p 30303:30303 \
-           nibiru/client-go
-```
-
-This will start `nbn` in fast-sync mode with a DB memory allowance of 1GB just as the
-above command does.  It will also create a persistent volume in your home directory for
-saving your blockchain as well as map the default ports. There is also an `alpine` tag
-available for a slim version of the image.
-
-Do not forget `--http.addr 0.0.0.0`, if you want to access RPC from other containers
-and/or hosts. By default, `nbn` binds to the local interface and RPC endpoints is not
-accessible from the outside.
 
 ### Programmatically interfacing `nbn` nodes
 
