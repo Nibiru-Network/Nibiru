@@ -1,0 +1,29 @@
+os: Visual Studio 2019
+clone_depth: 5
+version: "{branch}.{build}"
+environment:
+  matrix:
+    # We use gcc from MSYS2 because it is the most recent compiler version available on
+    # AppVeyor. Note: gcc.exe only works properly if the corresponding bin/ directory is
+    # contained in PATH.
+    - nbn_ARCH: amd64
+      nbn_CC: C:\msys64\mingw64\bin\gcc.exe
+      PATH: C:\msys64\mingw64\bin;C:\Program Files (x86)\NSIS\;%PATH%
+    - nbn_ARCH: 386
+      nbn_CC: C:\msys64\mingw32\bin\gcc.exe
+      PATH: C:\msys64\mingw32\bin;C:\Program Files (x86)\NSIS\;%PATH%
+
+install:
+  - git submodule update --init --depth 1
+  - go version
+  - "%nbn_CC% --version"
+
+build_script:
+  - go run build\ci.go install -dlgo -arch %nbn_ARCH% -cc %nbn_CC%
+
+after_build:
+  - go run build\ci.go archive -arch %nbn_ARCH% -type zip -signer WINDOWS_SIGNING_KEY -upload nbnstore/builds
+  - go run build\ci.go nsis -arch %nbn_ARCH% -signer WINDOWS_SIGNING_KEY -upload nbnstore/builds
+
+test_script:
+  - go run build\ci.go test -dlgo -arch %nbn_ARCH% -cc %nbn_CC% -coverage
