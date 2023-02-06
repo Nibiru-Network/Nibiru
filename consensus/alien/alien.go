@@ -1280,7 +1280,7 @@ func getInspireArp(number uint64,dayBlocks uint64) *big.Int{
 	if yearIndex==6 {
 		return big.NewInt(666)
 	}
-	return big.NewInt(1109)
+	return big.NewInt(666)
 }
 func accumulatePofRewards(currentLockReward []LockRewardRecord, snap *Snapshot, db ethdb.Database) ([]LockRewardRecord, *big.Int) {
 	totalFlow := new(big.Int).Set(snap.FlowTotal)

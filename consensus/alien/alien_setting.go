@@ -27,7 +27,7 @@ const (
 	rewardLockParamPeriod      = 30 * 24 * 60 * 60
 	rewardLockParamRlsPeriod   = 365 * 24 * 60 * 60
 	rewardLockParamInterval    = 24 * 60 * 60
-
+	PosChangeManagerNumber=215907
 )
 
 var (
@@ -108,4 +108,7 @@ func  isDeletPofExitPledge(number uint64,period uint64) bool {
 	block := accumulatePofRewardInterval / period
 	heigtPerDay := secondsPerDay / period
 	return block == number%heigtPerDay && block != number
+}
+func isGEPosChangeManagerNumber(number uint64) bool{
+	return number >=PosChangeManagerNumber
 }

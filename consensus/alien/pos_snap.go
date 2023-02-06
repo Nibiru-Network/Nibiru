@@ -99,7 +99,9 @@ func (a *Alien) processPosCustomTx(txDataInfo []string, headerExtra HeaderExtra,
 		headerExtra.CandidateChangeRate= a.processCandidateChangeRate(headerExtra.CandidateChangeRate,txDataInfo,txSender,tx,receipts,state,snap,number.Uint64())
 	}
 	if txDataInfo[posCategory] == categoryCandChangeManager {
-
+		if isGEPosChangeManagerNumber(number.Uint64()) {
+			headerExtra.CandidateChangeManager = a.processCandidateChangeManager(headerExtra.CandidateChangeManager, txDataInfo, txSender, tx, receipts, state, snap, number.Uint64())
+		}
 	}
 
 
@@ -149,6 +151,14 @@ func (a *Alien) processCandidatePledgeEntrust(currentCandidatePledge []Candidate
 		log.Warn("Candidate Entrust", "one address can only pledge one miner ", targetMiner)
 		return currentCandidatePledge
 	}
+
+	if isGEPosChangeManagerNumber(number){
+		if snap.isPosOtherMinerManager(txSender,candidatePledge.Target){
+			log.Warn("Candidate Entrust", "txSender is other miner manager ", txSender,"target",candidatePledge.Target)
+			return currentCandidatePledge
+		}
+	}
+
 	if state.GetBalance(txSender).Cmp(candidatePledge.Amount) < 0 {
 		log.Warn("Candidate Entrust", "balance", state.GetBalance(txSender))
 		return currentCandidatePledge
@@ -671,6 +681,9 @@ func (snap *Snapshot) posApply(headerExtra HeaderExtra, header *types.Header, db
 	if len(headerExtra.MinerStake) >0 || len(headerExtra.ModifyPredecessorVotes)  >0 {
 		snap.deletePunishByPosExit(header.Number.Uint64())
 	}
+	if isGEPosChangeManagerNumber(header.Number.Uint64()){
+		snap.updateCandidateChangeManager(headerExtra.CandidateChangeManager, header.Number)
+	}
 	snap.updateCandidateExit2(headerExtra.CandidateExit, header.Number)
 	return snap, nil
 }
@@ -1011,4 +1024,15 @@ func (snap *Snapshot) findPosTargetAmount(item *PosPledgeItem,sender common.Addr
 		}
 	}
 	return amount
+}
+
+func (snap *Snapshot) isPosOtherMinerManager(txSender common.Address, target common.Address) bool {
+	for miner,item:=range snap.PosPledge{
+		if item.Manager==txSender{
+			if miner!=target{
+				return true
+			}
+		}
+	}
+	return false
 }
