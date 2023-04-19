@@ -16,7 +16,7 @@ Building `nbn` requires both a Go (version 1.13 or later) and a C compiler. You 
 them using your favourite package manager. Once the dependencies are installed, run
 
 ```shell
-make nibiru
+make nbn
 ```
 
 or, to build the full suite of utilities:
